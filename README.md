@@ -2,7 +2,7 @@
 
 An ecommerce backend built with **Express**, **TypeScript**, **PostgreSQL** and **Prisma**.
 
-The PostgreSQL database runs in Docker, set up with the `docker-compose.yml` file in the project root, so you don't need Postgres installed locally.
+The PostgreSQL databases run in Docker, set up with the `docker-compose.yml` file in the project root, so you don't need Postgres installed locally. There are two containers: `db` for development and `db-test`, a separate in-memory database for the integration tests.
 
 ## Running instructions
 
@@ -51,7 +51,14 @@ docker compose up -d
 docker compose ps
 ```
 
-Wait until `ecommerce-db` shows as `(healthy)`. Port 5432 must be free, so stop any locally installed Postgres first.
+This starts both containers. Wait until they show as `(healthy)`:
+
+| Container           | Port | Used by           | Storage                                  |
+| ------------------- | ---- | ----------------- | ---------------------------------------- |
+| `ecommerce-db`      | 5432 | the app (`.env`)  | Docker volume, kept between restarts     |
+| `ecommerce-db-test` | 5433 | tests (`.env.test`) | in memory, wiped whenever it stops      |
+
+Ports 5432 and 5433 must be free, so stop any locally installed Postgres first.
 
 ### 4. Apply migrations and generate the Prisma client
 
@@ -86,6 +93,23 @@ npm run dev
 - API: http://localhost:3000
 - Health check: http://localhost:3000/health
 - Swagger docs: http://localhost:3000/docs
+
+### 7. Run the tests
+
+```bash
+npm test
+```
+
+| Command                    | Runs                                                 |
+| -------------------------- | ---------------------------------------------------- |
+| `npm test`                 | All tests once                                       |
+| `npm run test:unit`        | Unit tests for `src/lib` helpers (no database needed) |
+| `npm run test:integration` | Endpoint tests with Supertest (`db-test` must be running) |
+| `npm run test:watch`       | Tests in watch mode                                  |
+
+Integration tests run against the separate `ecommerce-db-test` container, configured in `.env.test`. Its data lives only in memory, migrations are applied automatically before the tests run, and every table is emptied before each test. Your development database is never touched.
+
+If only the test database is needed, start it on its own with `docker compose up -d db-test`.
 
 ## Current plan
 
