@@ -1,6 +1,9 @@
-import { defineConfig, env } from "prisma/config";
+import { existsSync } from "node:fs";
+import { defineConfig } from "prisma/config";
 
-process.loadEnvFile();
+if (existsSync(".env")) {
+  process.loadEnvFile();
+}
 
 export default defineConfig({
   schema: "prisma/schema",
@@ -9,6 +12,6 @@ export default defineConfig({
     seed: "tsx --env-file=.env src/database/seeds/index.ts",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: process.env.DATABASE_URL ?? "",
   },
 });

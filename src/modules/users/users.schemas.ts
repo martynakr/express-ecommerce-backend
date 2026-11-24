@@ -1,18 +1,16 @@
 import { z } from "zod";
-import { registry } from "../../docs/openapi.js";
 import type { User } from "../../generated/prisma/client.js";
 import { Role } from "../../generated/prisma/enums.js";
 
-export const UserResponseSchema = registry.register(
-  "UserResponse",
-  z.object({
-    id: z.number().int().openapi({ example: 1 }),
-    email: z.email().openapi({ example: "customer@example.com" }),
-    name: z.string().openapi({ example: "Customer User" }),
-    role: z.enum(Role).openapi({ example: Role.CUSTOMER }),
+export const UserResponseSchema = z
+  .object({
+    id: z.number().int(),
+    email: z.email(),
+    name: z.string(),
+    role: z.enum(Role),
     createdAt: z.iso.datetime(),
-  }),
-);
+  })
+  .meta({ id: "UserResponse" });
 
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 

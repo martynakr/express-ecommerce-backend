@@ -73,7 +73,9 @@ This creates two users, both with the password `Password123!`:
 | `admin@example.com`    | ADMIN    |
 | `customer@example.com` | CUSTOMER |
 
-Seeding is safe to re-run. Existing users are updated, not duplicated.
+It also creates 6 categories and 50 products with fake data from Faker. Some products are out of stock or inactive, so availability checks can be tested.
+
+Seeding is safe to re-run. Faker uses a fixed seed, so every run generates the same data, and existing rows are updated by email or slug instead of duplicated.
 
 ### 6. Start the server
 
@@ -103,7 +105,7 @@ erDiagram
     CATEGORIES ||--o{ PRODUCTS : "groups"
 
     USERS {
-        id id PK
+        int id PK
         string email UK
         string password_hash
         string name
@@ -113,7 +115,7 @@ erDiagram
     }
 
     CATEGORIES {
-        id id PK
+        int id PK
         string name
         string slug UK
         timestamp created_at
@@ -121,30 +123,30 @@ erDiagram
     }
 
     PRODUCTS {
-        id id PK
-        id category_id FK
+        int id PK
+        int category_id FK
         string name
         string slug UK
-        text description
-        money price
+        text description "nullable"
+        int price_cents
         int stock_quantity
-        string image_url
+        string image_url "nullable"
         boolean is_active
         timestamp created_at
         timestamp updated_at
     }
 
     CARTS {
-        id id PK
-        id user_id FK, UK
+        int id PK
+        int user_id FK, UK
         timestamp created_at
         timestamp updated_at
     }
 
     CART_ITEMS {
-        id id PK
-        id cart_id FK
-        id product_id FK
+        int id PK
+        int cart_id FK
+        int product_id FK
         int quantity
         timestamp created_at
         timestamp updated_at
@@ -164,7 +166,8 @@ erDiagram
 - `carts.user_id` is unique, so each user has one cart.
 - `cart_items` is unique on `(cart_id, product_id)`. Adding the same product again increases the quantity instead of creating a duplicate row.
 - `categories.slug` and `products.slug` are unique, for URL-friendly lookups.
-- Money is stored as integer cents or `NUMERIC`, never as a float.
+- Prices are stored as integer cents in `products.price_cents` (e.g. 1999 = 19.99), never as a float.
+- A category cannot be deleted while it still has products.
 
 ### Stock availability
 

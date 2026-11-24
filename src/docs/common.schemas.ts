@@ -1,13 +1,15 @@
 import { z } from "zod";
-import { registry } from "./openapi.js";
 
-export const ErrorResponseSchema = registry.register(
-  "ErrorResponse",
-  z.object({
+export const ErrorResponseSchema = z
+  .object({
     error: z.object({
-      code: z.string().openapi({ example: "VALIDATION_ERROR" }),
-      message: z.string().openapi({ example: "Validation failed" }),
+      code: z.string(),
+      message: z.string(),
       details: z.unknown().optional(),
     }),
-  }),
-);
+  })
+  .meta({ id: "ErrorResponse" });
+
+export function errorExample(code: string, message: string, details?: unknown) {
+  return { error: { code, message, ...(details === undefined ? {} : { details }) } };
+}

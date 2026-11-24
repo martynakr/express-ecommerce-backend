@@ -2,11 +2,12 @@ import cors from "cors";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { env } from "./config/env.js";
-import { generateOpenApiDocument } from "./docs/openapi.js";
+import { generateOpenApiDocument } from "./docs/index.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { notFound } from "./middleware/not-found.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { healthRouter } from "./modules/health/health.routes.js";
+import { productsRouter } from "./modules/products/products.routes.js";
 
 export function createApp() {
   const app = express();
@@ -22,6 +23,7 @@ export function createApp() {
 
   app.use("/health", healthRouter);
   app.use("/auth", authRouter);
+  app.use("/products", productsRouter);
 
   const openApiDocument = generateOpenApiDocument();
 
