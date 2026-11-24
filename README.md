@@ -1,5 +1,7 @@
 # Ecommerce Backend
 
+[![CI](https://github.com/martynakr/express-ecommerce-backend/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/martynakr/express-ecommerce-backend/actions/workflows/ci.yml)
+
 An ecommerce backend built with **Express**, **TypeScript**, **PostgreSQL** and **Prisma**.
 
 The PostgreSQL databases run in Docker, set up with the `docker-compose.yml` file in the project root, so you don't need Postgres installed locally. There are two containers: `db` for development and `db-test`, a separate in-memory database for the integration tests.
