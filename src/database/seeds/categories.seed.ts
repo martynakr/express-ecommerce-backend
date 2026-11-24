@@ -1,13 +1,9 @@
-import { faker } from "@faker-js/faker";
 import { prisma } from "../../lib/prisma.js";
 import { slugify } from "../../lib/slug.js";
-
-const CATEGORY_COUNT = 6;
+import catalog from "./data/catalog.json" with { type: "json" };
 
 export async function seedCategories() {
-  const names = faker.helpers.uniqueArray(faker.commerce.department, CATEGORY_COUNT);
-
-  for (const name of names) {
+  for (const { name } of catalog.categories) {
     const slug = slugify(name);
 
     await prisma.category.upsert({
@@ -17,5 +13,5 @@ export async function seedCategories() {
     });
   }
 
-  console.log(`Seeded ${names.length} categories`);
+  console.log(`Seeded ${catalog.categories.length} categories`);
 }

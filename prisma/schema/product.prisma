@@ -1,3 +1,11 @@
+enum Gender {
+  MEN
+  WOMEN
+  UNISEX
+
+  @@map("gender")
+}
+
 model Product {
   id            Int      @id @default(autoincrement())
   categoryId    Int      @map("category_id")
@@ -6,6 +14,7 @@ model Product {
   description   String?
   priceCents    Int      @map("price_cents")
   stockQuantity Int      @default(0) @map("stock_quantity")
+  gender        Gender   @default(UNISEX)
   imageUrl      String?  @map("image_url")
   isActive      Boolean  @default(true) @map("is_active")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -13,6 +22,7 @@ model Product {
   category      Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@index([categoryId])
+  @@index([gender])
   @@index([isActive, createdAt])
   @@map("products")
 }

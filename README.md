@@ -82,9 +82,9 @@ This creates two users, both with the password `Password123!`:
 | `admin@example.com`    | ADMIN    |
 | `customer@example.com` | CUSTOMER |
 
-It also creates 6 categories and 50 products with fake data from Faker. Some products are out of stock or inactive, so availability checks can be tested.
+It also creates a clothing store catalog of 7 categories and 48 products from `src/database/seeds/data/catalog.json`. Product photos are hosted by [DummyJSON](https://dummyjson.com) and [Fake Store API](https://fakestoreapi.com). Some products are out of stock or inactive, so availability checks can be tested.
 
-Seeding is safe to re-run. Faker uses a fixed seed, so every run generates the same data, and existing rows are updated by email or slug instead of duplicated.
+Seeding is safe to re-run. Existing rows are updated by email or slug instead of duplicated. To change the catalog, edit the JSON file and seed again.
 
 ### 6. Start the server
 
