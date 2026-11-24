@@ -5,6 +5,7 @@ import { env } from "./config/env.js";
 import { generateOpenApiDocument } from "./docs/openapi.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { notFound } from "./middleware/not-found.js";
+import { authRouter } from "./modules/auth/auth.routes.js";
 import { healthRouter } from "./modules/health/health.routes.js";
 
 export function createApp() {
@@ -20,6 +21,7 @@ export function createApp() {
   app.use(express.json());
 
   app.use("/health", healthRouter);
+  app.use("/auth", authRouter);
 
   const openApiDocument = generateOpenApiDocument();
 
