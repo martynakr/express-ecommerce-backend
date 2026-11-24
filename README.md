@@ -29,9 +29,20 @@ POSTGRES_PASSWORD=ecommerce_dev_password
 POSTGRES_DB=ecommerce
 
 DATABASE_URL="postgresql://ecommerce:ecommerce_dev_password@localhost:5432/ecommerce?schema=public"
+
+CLIENT_ORIGIN=http://localhost:5173
+
+JWT_SECRET=<a random string of at least 32 characters>
+JWT_EXPIRES_IN=1d
 ```
 
 Docker Compose uses the `POSTGRES_*` values to create the database. The app and Prisma use `DATABASE_URL`, so keep its user, password and database name in sync with them.
+
+`CLIENT_ORIGIN` is the frontend URL allowed by CORS. Generate a `JWT_SECRET` with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
 
 ### 3. Start the database
 
