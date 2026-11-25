@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import AppLogo from '@/components/AppLogo.vue'
+import AppHeader from '@/components/AppHeader.vue'
 </script>
 
 <template>
-  <AppLogo />
-  <RouterView />
+  <AppHeader />
+  <main class="container">
+    <RouterView />
+  </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+  width: 80%;
+  margin-inline: auto;
+}
+</style>

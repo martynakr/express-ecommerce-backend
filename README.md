@@ -113,6 +113,31 @@ Integration tests run against the separate `ecommerce-db-test` container, config
 
 If only the test database is needed, start it on its own with `docker compose up -d db-test`.
 
+## Frontend
+
+The `frontend/` folder holds a simple storefront built with **Vue 3**, **TypeScript** and **Vite**. It shows the products from the API on separate Women and Men pages.
+
+With the backend running, open a second terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+Create a `frontend/.env` file:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+Then start it:
+
+```bash
+npm run dev
+```
+
+The app runs at http://localhost:5173. Run its tests with `npm run test:unit`.
+
 ## Current plan
 
 - Users can register and log in
