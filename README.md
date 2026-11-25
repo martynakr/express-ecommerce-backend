@@ -1,6 +1,6 @@
 # Ecommerce Backend
 
-[![CI](https://github.com/martynakr/express-ecommerce-backend/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/martynakr/express-ecommerce-backend/actions/workflows/ci.yml)
+[![CI](https://github.com/martynakr/express-vuejs-ecommerce/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/martynakr/express-vuejs-ecommerce/actions/workflows/ci.yml)
 
 An ecommerce backend built with **Express**, **TypeScript**, **PostgreSQL** and **Prisma**.
 
