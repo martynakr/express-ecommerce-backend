@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { ErrorResponseSchema, errorExample } from "../../docs/common.schemas.js";
 import { registry } from "../../docs/openapi.js";
 import {
@@ -5,13 +6,19 @@ import {
   ProductListQuerySchema,
 } from "./products.schemas.js";
 
+const ProductListQueryDocSchema = ProductListQuerySchema.extend({
+  gender: z.enum(["men", "women", "unisex"]).optional(),
+});
+
 registry.registerPath({
   method: "get",
   path: "/products",
   tags: ["Products"],
   summary: "List active products, newest first",
+  description:
+    "Filter by `gender` (`men`, `women` or `unisex`, any case) and by `category` slug. Filters can be combined. An unknown category slug returns an empty page.",
   request: {
-    query: ProductListQuerySchema,
+    query: ProductListQueryDocSchema,
   },
   responses: {
     200: {
@@ -22,29 +29,33 @@ registry.registerPath({
           example: {
             data: [
               {
-                id: 50,
-                name: "Refined Rubber Keyboard",
-                slug: "refined-rubber-keyboard",
-                description: "A reliable keyboard with a modern design",
-                priceCents: 15511,
-                stockQuantity: 50,
+                id: 33,
+                name: "Red Shoes",
+                slug: "red-shoes",
+                description: "The Red Shoes are a bold and stylish choice for any occasion.",
+                priceCents: 3499,
+                stockQuantity: 21,
                 inStock: true,
-                imageUrl: "https://picsum.photos/seed/wChgX8H/640/480",
-                category: { id: 2, name: "Grocery", slug: "grocery" },
+                imageUrl: "https://cdn.dummyjson.com/product-images/womens-shoes/red-shoes/1.webp",
+                category: { id: 5, name: "Shoes", slug: "shoes" },
+                gender: "WOMEN",
               },
             ],
-            meta: { page: 1, limit: 20, total: 46, totalPages: 3 },
+            meta: { page: 1, limit: 20, total: 1, totalPages: 1 },
           },
         },
       },
     },
     400: {
-      description: "Invalid pagination parameters",
+      description: "Invalid pagination or filter parameters",
       content: {
         "application/json": {
           schema: ErrorResponseSchema,
           example: errorExample("VALIDATION_ERROR", "Validation failed", {
-            query: { limit: ["Too big: expected number to be <=100"] },
+            query: {
+              limit: ["Too big: expected number to be <=100"],
+              gender: ['Invalid option: expected one of "MEN"|"WOMEN"|"UNISEX"'],
+            },
           }),
         },
       },

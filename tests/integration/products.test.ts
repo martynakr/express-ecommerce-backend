@@ -52,6 +52,7 @@ describe("GET /products", () => {
       inStock: true,
       imageUrl: null,
       category: { id: category.id, name: "Toys", slug: "toys" },
+      gender: "UNISEX",
     });
     expect(res.body.data[0]).not.toHaveProperty("isActive");
     expect(res.body.data[0]).not.toHaveProperty("categoryId");
@@ -121,6 +122,61 @@ describe("GET /products", () => {
     expect(res.body.meta).toMatchObject({ page: 5, total: 1, totalPages: 1 });
   });
 
+  describe("filters", () => {
+    const slugs = (res: request.Response) =>
+      res.body.data.map((p: { slug: string }) => p.slug).sort();
+
+    beforeEach(async () => {
+      const shoes = await createCategory({ name: "Shoes", slug: "shoes" });
+      const dresses = await createCategory({ name: "Dresses", slug: "dresses" });
+
+      await createProduct(shoes.id, { slug: "mens-sneakers", gender: "MEN" });
+      await createProduct(shoes.id, { slug: "womens-heels", gender: "WOMEN" });
+      await createProduct(shoes.id, { slug: "unisex-slides", gender: "UNISEX" });
+      await createProduct(shoes.id, { slug: "hidden-boots", gender: "WOMEN", isActive: false });
+      await createProduct(dresses.id, { slug: "summer-dress", gender: "WOMEN" });
+    });
+
+    it("filters by gender and counts only matching products in the total", async () => {
+      const res = await request(app).get("/products?gender=women");
+
+      expect(res.status).toBe(200);
+      expect(slugs(res)).toEqual(["summer-dress", "womens-heels"]);
+      expect(res.body.meta).toMatchObject({ total: 2, totalPages: 1 });
+    });
+
+    it.each(["MEN", "Men", "men"])("accepts gender in any case (%s)", async (gender) => {
+      const res = await request(app).get(`/products?gender=${gender}`);
+
+      expect(res.status).toBe(200);
+      expect(slugs(res)).toEqual(["mens-sneakers"]);
+    });
+
+    it("filters by category slug", async () => {
+      const res = await request(app).get("/products?category=shoes");
+
+      expect(slugs(res)).toEqual(["mens-sneakers", "unisex-slides", "womens-heels"]);
+      expect(res.body.meta.total).toBe(3);
+    });
+
+    it("combines category and gender filters", async () => {
+      const res = await request(app).get("/products?category=shoes&gender=women");
+
+      expect(slugs(res)).toEqual(["womens-heels"]);
+      expect(res.body.meta.total).toBe(1);
+    });
+
+    it("returns an empty page for an unknown category", async () => {
+      const res = await request(app).get("/products?category=hats");
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        data: [],
+        meta: { page: 1, limit: 20, total: 0, totalPages: 0 },
+      });
+    });
+  });
+
   it.each([
     ["page=0", "page"],
     ["page=-1", "page"],
@@ -128,6 +184,8 @@ describe("GET /products", () => {
     ["page=1.5", "page"],
     ["limit=0", "limit"],
     ["limit=101", "limit"],
+    ["gender=kids", "gender"],
+    ["category=", "category"],
   ])("rejects invalid query %s with 400", async (query, field) => {
     const res = await request(app).get(`/products?${query}`);
 

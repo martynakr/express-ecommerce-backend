@@ -1,3 +1,4 @@
+import type { Gender } from "../../src/generated/prisma/client.js";
 import { prisma } from "../../src/lib/prisma.js";
 
 let sequence = 0;
@@ -24,6 +25,7 @@ type ProductOverrides = {
   priceCents?: number;
   stockQuantity?: number;
   isActive?: boolean;
+  gender?: Gender;
   createdAt?: Date;
 };
 
@@ -39,6 +41,7 @@ export function createProduct(categoryId: number, overrides: ProductOverrides = 
       priceCents: overrides.priceCents ?? 1000,
       stockQuantity: overrides.stockQuantity ?? 10,
       isActive: overrides.isActive ?? true,
+      gender: overrides.gender ?? "UNISEX",
       ...(overrides.createdAt ? { createdAt: overrides.createdAt } : {}),
     },
   });
